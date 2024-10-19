@@ -1,0 +1,48 @@
+# Bluetooth configuration
+bluetooth:
+  address: "DF:36:42:3D:BD:A4"  # The Bluetooth address of your power meter device. You can find this by scanning for BLE devices.
+  uuid: "00002a63-0000-1000-8000-00805f9b34fb"  # The UUID of the Cycling Power Measurement characteristic.
+
+# Data for intervals ICU intergation
+# this will pull your FTP and zones from intervals.icu. You can find your athlete ID and API key in the settings of your intervals.icu account.
+# If you don't want to use intervals.icu, you can manually set your FTP and zones in the power_zones section below.
+athlete:
+  id: "i154973"
+  api_key: "4k9d2m3g2d3rk6a529y32jdk7"
+  ftp_type: "ftp"  # Calculate Zones either based on FTP or indoor FTP taken from interfals.icu  Options: "ftp" or "indoor_ftp"
+
+# Default Power Zones if not using intervals ICU
+power_zones:
+  - min_watt: 0
+    max_watt: 132
+    name: "Zone 1"
+    color: [0, 0, 255]  # Blue
+  - min_watt: 133
+    max_watt: 180
+    name: "Zone 2"
+    color: [0, 255, 0]  # Green
+  - min_watt: 181
+    max_watt: 216
+    name: "Zone 3"
+    color: [255, 255, 0]  # Yellow
+  - min_watt: 217
+    max_watt: 252
+    name: "Zone 4"
+    color: [255, 165, 0]  # Orange
+  - min_watt: 253
+    max_watt: !!float "inf"
+    name: "Zone 5"
+    color: [255, 0, 0]  # Red
+
+# LED strip configuration
+led_strip:
+  count: 4  # Number of LEDs in the strip. Adjust this based on the length of your LED strip.
+  pin: 18  # GPIO pin connected to the pixels (18 uses PWM!). Ensure this pin supports PWM.
+  freq_hz: 800000  # LED signal frequency in hertz (usually 800kHz).
+  dma: 10  # DMA channel to use for generating signal (try 10).
+  brightness: 100  # Brightness level of the LEDs (0-255). Adjust this to control the overall brightness.
+  invert: false  # True to invert the signal (when using NPN transistor level shift).
+  channel: 0  # Set to 1 for GPIOs 13, 19, 41, 45, or 53.
+  max_brightness: 255  # Absolute maximum brightness for safety
+  initial_brightness_duration: 2  # Duration in seconds for initial maximum brightness
+  initial_brightness_value: 200  # Initial brightness value (capped to max_brightness)
