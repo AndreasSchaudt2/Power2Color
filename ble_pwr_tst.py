@@ -7,6 +7,17 @@ import time
 import signal
 import sys
 import threading
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the Intervals.icu API key
+intervals_icu_api_key = os.getenv('INTERVALS_ICU_API_KEY')
+
+# Ensure the API key is loaded
+if not intervals_icu_api_key:
+    raise ValueError("Intervals.icu API 
 
 # Load configuration from YAML file
 with open("config.yaml", "r") as config_file:

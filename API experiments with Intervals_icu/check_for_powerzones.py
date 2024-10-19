@@ -1,14 +1,18 @@
 import requests
 import yaml
 from requests.auth import HTTPBasicAuth
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Load configuration from YAML file
 with open("config.yaml", "r") as config_file:
     config = yaml.safe_load(config_file)
 
-# Extract athlete ID and API key from configuration
-athlete_id = config['athlete']['id']
-api_key = config['athlete']['api_key']
+# Extract athlete ID and API key from environment variables
+athlete_id = os.getenv('ATHLETE_ID')
+api_key = os.getenv('INTERVALS_ICU_API_KEY')
 
 # Intervals.icu API URL
 url = f"https://intervals.icu/api/v1/athlete/{athlete_id}"
