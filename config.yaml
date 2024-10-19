@@ -7,8 +7,7 @@ bluetooth:
 # this will pull your FTP and zones from intervals.icu. You can find your athlete ID and API key in the settings of your intervals.icu account.
 # If you don't want to use intervals.icu, you can manually set your FTP and zones in the power_zones section below.
 athlete:
-  id: "i154973"
-  api_key: "4k9d2m3g2d3rk6a529y32jdk7"
+ 
   ftp_type: "ftp"  # Calculate Zones either based on FTP or indoor FTP taken from interfals.icu  Options: "ftp" or "indoor_ftp"
 
 # Default Power Zones if not using intervals ICU
