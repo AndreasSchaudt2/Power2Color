@@ -24,7 +24,7 @@ Power2Color is a Raspberry Pi 4 based project that visualizes your current power
 
 2. **Clone the Repository**:
     ```sh
-    git clone https://github.com/your-username/Power2Color.git
+    git clone https://github.com/AndreasSchaudt2/Power2Color.git
     cd Power2Color
     ```
 
@@ -51,8 +51,58 @@ Power2Color is a Raspberry Pi 4 based project that visualizes your current power
 2. **Start the Visualization**:
     - Run the main script to start visualizing your power zones:
       ```sh
-      python3 main.py
+      ./run_power2color.sh
       ```
+
+## Setting Up Automatic Startup
+
+To ensure the script starts automatically when the Raspberry Pi boots up, you can create a systemd service:
+
+1. **Create a systemd service file**:
+    - Create a new service file in the `/etc/systemd/system/` directory. For example, `power2color.service`:
+      ```sh
+      sudo nano /etc/systemd/system/power2color.service
+      ```
+
+2. **Define the service**:
+    - Add the following content to the `power2color.service` file:
+      ```ini
+      [Unit]
+      Description=Power2Color Service
+      After=network.target
+
+      [Service]
+      ExecStart=/home/pi/Power2Color/run_power2color.sh
+      WorkingDirectory=/home/pi/Power2Color
+      User=pi
+      Restart=always
+
+      [Install]
+      WantedBy=multi-user.target
+      ```
+      make sure the paths are correct. They are depending on the user.
+
+3. **Reload systemd to apply the new service**:
+    ```sh
+    sudo systemctl daemon-reload
+    ```
+
+4. **Enable the service to start on boot**:
+    ```sh
+    sudo systemctl enable power2color.service
+    ```
+
+5. **Start the service**:
+    ```sh
+    sudo systemctl start power2color.service
+    ```
+
+6. **Check the status of the service**:
+    ```sh
+    sudo systemctl status power2color.service
+    ```
+
+This setup will ensure that your script runs automatically on startup and keeps running even if it crashes.
 
 ## Configuration
 

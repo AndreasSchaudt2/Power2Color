@@ -7,6 +7,7 @@ import time
 import signal
 import sys
 import threading
+import os
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -17,7 +18,7 @@ intervals_icu_api_key = os.getenv('INTERVALS_ICU_API_KEY')
 
 # Ensure the API key is loaded
 if not intervals_icu_api_key:
-    raise ValueError("Intervals.icu API 
+   raise ValueError("Athlete ID or Intervals.icu API key not found. Please set them in the .env file.")
 
 # Load configuration from YAML file
 with open("config.yaml", "r") as config_file:
