@@ -25,8 +25,8 @@ if response.status_code == 200:
     
     # Find the relevant section in sportSettings where type contains "Ride"
     sport_settings = data.get('sportSettings', [])
-    #print('found sport settings') 
-    #print(sport_settings)
+    print('found sport settings') 
+    print(sport_settings)
     ride_settings = next((setting for setting in sport_settings if 'Ride' in setting.get('types', '')), None)
     
     if ride_settings:
