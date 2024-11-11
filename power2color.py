@@ -14,7 +14,7 @@ import os
 
 # Define global variables and constants
 debug = False
-fakeinput = True
+fakeinput = False
 
 # Load environment variables from .env file if it exists
 load_dotenv(find_dotenv())
@@ -76,8 +76,18 @@ class Power2Color:
             print(f"Zone {i+1} '{zone[0]}': {zone[1]}W - {zone[2]}W color : {color.r} {color.g} {color.b}" )
 
     def load_intervals_from_intervals_icu(self):
-        athlete_id = os.getenv('ATHLETE_ID', self.config['athlete']['id'])
-        api_key = os.getenv('API_KEY', self.config['athlete']['api_key'])
+        if os.getenv('ATHLETE_ID') is None:
+            athlet_id=self.self.config['athlete']['athlete_id'] 
+        else:
+            athlete_id = os.getenv('ATHLETE_ID')
+
+        if os.getenv('API_KEY') is None:
+            api_key = self.config['athlete']['api_key']
+        else:
+            api_key = os.getenv('API_KEY')
+        
+        #print(f"Loading intervals from intervals.icu for athlete ID {athlete_id}...")
+
         ftp_type = self.config['athlete'].get('ftp_type', 'ftp')  # Default to 'ftp' if not specified
 
         # Intervals.icu API URL
@@ -222,7 +232,7 @@ class Power2Color:
         for zone_name, min_watt, max_watt, color in self.zones:
             if min_watt <= power <= (float('inf') if max_watt == '.inf' else max_watt):
                 self.zone = zone_name
-                print(f"Determined Current Zone: {self.zone} for power: {power}, so clolor is:  {color.r} {color.g} {color.b}")
+                #print(f"Determined Current Zone: {self.zone} for power: {power}, so clolor is:  {color.r} {color.g} {color.b}")
                 return color
         self.zone = "Unknown Zone"
         return self.idle_color

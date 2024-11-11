@@ -25,9 +25,9 @@ mode_params:
 use_zones_from_intervals_icu: true
 # settings to access the interfal.icu API
 athlete:
-  id: i154973
-  api_key: 2snj0qaaenw286l8diqc2ubm3
-  ftp_type: indoor_ftp
+  id: ibindrandi                  #place your intervals.icu athlete id here webpage -> profile 
+  api_key: some_fake_key          #place your intervals.icu api key here webpage -> profile -> api key -> view
+  ftp_type: indoor_ftp            #select whicht power zone definitions shall be used defaults are ftp, indoor_ftp
 
 
 #alternate, local power zone deifinitions if not using intervals.icu
