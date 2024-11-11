@@ -9,6 +9,14 @@ Power2Color is a Raspberry Pi 4 based project that visualizes your current power
 - **Bluetooth Connectivity**: The Raspberry Pi connects to your indoor trainer via Bluetooth to constantly read power data.
 - **Dynamic LED Effects**: LEDs pulse slightly while in a zone and light up brighter during the first seconds when entering a new zone.
 
+## Compatible Trainers
+This was defeloped and tested only for the follwing Trainers:
+- Wahoo Kickr Core, Model WF123, Version 1.0
+Most shoud work but one needs to find out the following information. I will add info on how to derive this info for other trainers later.
+- bluetooth adress (easy, like DF:36:42:3D:BD:A4)
+- UUID of the bluetooth service (difficult, like 00002a63-0000-1000-8000-00805f9b34fb )
+Both values need to be entered in the conf.yaml file.
+
 ## Requirements
 
 - Raspberry Pi 4
