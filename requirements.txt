@@ -2,3 +2,5 @@ requests
 PyYAML
 python-dotenv
 bleak
+ruamel.yaml
+rpi_ws281x

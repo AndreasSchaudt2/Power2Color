@@ -1,6 +1,6 @@
 #Bluetooth address of the Smart Trainer
 bluetooth:
-  address: DF:36:42:3D:BD:A4
+  address: DF:36:42:3D:BD:A4 #DF:36:42:3D:BD:A4
   uuid: 00002a63-0000-1000-8000-00805f9b34fb
 
 # settings for the LED strip
@@ -50,12 +50,12 @@ power_zones:
 
 # colors for the zones. must be the same or more than the number of zones
 power_zones_colors:
-  - [0, 0, 255]     # Z1: Blue
-  - [0, 255, 0]     # Z2: Green
-  - [255, 255, 0]   # Z3: Yellow
-  - [255, 165, 0]   # Z4: range
-  - [255, 0, 0]     # Z5: Red
-  - [255, 0, 255]   # Z6: Magenta
-  - [128, 0, 128]   # Z7: Purple
-  - [0, 128, 128]   # Z8: Teal
-  - [128, 128, 0]   # Z9: Olive
+- [0, 0, 255]       # Z1: Blue
+- [0, 255, 0]       # Z2: Green
+- [255, 255, 0]     # Z3: Yellow
+- [255, 165, 0]     # Z4: range
+- [255, 0, 0]       # Z5: Red
+- [255, 0, 255]     # Z6: Magenta
+- [128, 0, 128]     # Z7: Purple
+- [0, 128, 128]     # Z8: Teal
+- [128, 128, 0]     # Z9: Olive

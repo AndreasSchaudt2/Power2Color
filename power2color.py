@@ -11,6 +11,7 @@ from rpi_ws281x import PixelStrip, Color
 from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv, find_dotenv
 import os
+from ruamel.yaml import YAML
 
 # Define global variables and constants
 debug = False
@@ -159,13 +160,17 @@ class Power2Color:
 
     
     def read_config(self):
+        yaml = YAML()
         with open(self.config_path, 'r') as file:
-            return yaml.safe_load(file)
+            return yaml.load(file)
 
     def update_config(self, address):
-        self.config['bluetooth']['address'] = address
+        yaml = YAML()
+        with open(self.config_path, 'r') as file:
+            config = yaml.load(file)
+        config['bluetooth']['address'] = address
         with open(self.config_path, 'w') as file:
-            yaml.safe_dump(self.config, file)
+            yaml.dump(config, file)
 
     async def fakeinput(self):
         ramp_time = 2  # seconds for ramp up and down

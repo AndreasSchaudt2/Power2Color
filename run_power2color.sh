@@ -4,4 +4,4 @@
 source /home/andi/myenv/bin/activate
 
 # Run the Python script with sudo
-sudo /home/andi/myenv/bin/python /home/andi/Power2Color/pwr2color.py
+sudo /home/andi/myenv/bin/python /home/andi/Power2Color/power2color.py
