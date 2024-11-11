@@ -12,10 +12,9 @@ from requests.auth import HTTPBasicAuth
 from dotenv import load_dotenv, find_dotenv
 import os
 from ruamel.yaml import YAML
+import argparse
 
-# Define global variables and constants
-debug = False
-fakeinput = False
+
 
 # Load environment variables from .env file if it exists
 load_dotenv(find_dotenv())
@@ -280,6 +279,8 @@ class Power2Color:
             if self.client and self.client.is_connected:
                 await self.client.disconnect()
             print("Disconnected from Bluetooth device.")
+            self.led_control.turn_off_leds()
+            
 
 class LEDControl:
     def __init__(self, config_path):
@@ -362,6 +363,12 @@ class LEDControl:
 
     def set_color(self, color=Color(255, 255, 0)):
         self.color = color
+    
+    def turn_off_leds(self):
+        """Turn off all LEDs."""
+        for i in range(self.strip.numPixels()):
+            self.strip.setPixelColor(i, Color(0, 0, 0))
+        self.strip.show()
 
     async def run(self, wait_ms=10):
         while True:
@@ -372,10 +379,9 @@ class LEDControl:
             await asyncio.sleep(wait_ms / 1000.0)
 
 
-async def main():
-    config_path = 'config.yaml'
-    led_control = LEDControl(config_path)
-    power2color = Power2Color(config_path, led_control)
+async def main(led_control, power2color):
+    
+    
     
     await asyncio.gather(
         power2color.run(),
@@ -384,7 +390,19 @@ async def main():
     )
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Power2Color")
+    parser.add_argument("--debug", action="store_true", help="Enable debug mode")
+    parser.add_argument("--fakeinput", type=bool, nargs='?', const=True, default=False, help="Enable fake input mode")
+    args = parser.parse_args()
+
+    debug = args.debug
+    fakeinput = args.fakeinput
+
+    config_path = 'config.yaml'
+    led_control = LEDControl(config_path)
+    power2color = Power2Color(config_path, led_control)
     try:
-        asyncio.run(main())
+        asyncio.run(main(led_control, power2color))
     except KeyboardInterrupt:
+        led_control.turn_off_leds()
         print("Program interrupted by user.")
