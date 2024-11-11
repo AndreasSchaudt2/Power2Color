@@ -31,6 +31,17 @@ Both values need to be entered in the conf.yaml file.
     - Ensure Bluetooth is enabled on the Raspberry Pi.
 
 2. **Clone the Repository**:
+    connect to the raspberry via ssh:
+    ```sh
+    ssh <user>@<device_name>
+    cd Power2Color
+    ```
+    eg.
+    ```sh
+    ssh andi@power2colorpi
+    ```
+
+    download the code from Github
     ```sh
     git clone https://github.com/AndreasSchaudt2/Power2Color.git
     cd Power2Color
@@ -40,27 +51,37 @@ Both values need to be entered in the conf.yaml file.
     ```sh
     sudo apt-get update
     sudo apt-get install -y python3 python3-pip
-    pip3 install -r requirements.txt
+    sudo pip3 install -r requirements.txt
+    ```
+    if you use virtual python environments you might need to use:
+    ```sh
+    sudo <path_to_your_virt_env>/bin/pip install -r requirements.text
     ```
 
 4. **Configure Power Zones**:
     - Edit the `config.json` file to set your power zones manually.
     - Alternatively, configure your Intervals.icu account details in the `config.json` to fetch power zones automatically.
 
-## Usage
+## Run
+connect to the raspberry via ssh
 
-1. **Connect to the Indoor Trainer**:
-    - Ensure your indoor trainer is powered on and in Bluetooth pairing mode.
-    - Run the connection script to pair with the trainer:
-      ```sh
-      python3 connect_trainer.py
-      ```
+    ```sh
+    ssh <user>@<device_name>
+    cd Power2Color
+    ```
+ 
+    ```sh
+    ssh andi@power2colorpi
+    ```
+start the program:
+    ```
+    cd ~/Power2Color/
+    sh ./power2color.sh
+    ```
 
-2. **Start the Visualization**:
-    - Run the main script to start visualizing your power zones:
-      ```sh
-      ./run_power2color.sh
-      ```
+If the program was not yet paired with an trainer and now Bluetooth adress is given in the config.yaml it will try to find on via Bluetooth and then let you select the correct trainer. The programm will store the Bluetooth adress for future use in the config.yaml.
+![Power2Color Image](connection_sequence.png)
+
 
 ## Setting Up Automatic Startup
 
