@@ -79,26 +79,22 @@ Both values need to be entered in the conf.yaml file.
     - Edit the `config.json` file to set your power zones manually.
     - Alternatively, configure your Intervals.icu account details in the `config.json` to fetch power zones automatically.
 
-## Run 
-1. running the code manually:
+## Run the program manually
+For the first time you need to run the program manually to ensure proper bluetooth connection.
+Then you can setup automatic start of the code as described in the next chapter.
 
-connect to the raspberry via ssh if you are not yet connected
-
-    ```sh
-    ssh <user>@<device_name>
-    cd Power2Color
-    ```
- 
+1. connect to the raspberry via ssh if you are not yet connected
     ```sh
     ssh andi@power2colorpi
     ```
-start the program:
-    ```
+2. start the program:
+    ```sh
     cd ~/Power2Color/
     sudo ~/myenv/bin/python3 ./power2color.py
     ```
 
-If the program was not yet paired with an trainer and now Bluetooth adress is given in the config.yaml it will try to find on via Bluetooth and then let you select the correct trainer. The programm will store the Bluetooth adress for future use in the config.yaml.
+If the program was not yet paired with an trainer and now Bluetooth address is given in the config.yaml it will try to find on via Bluetooth and then let you select the correct trainer. The program will store the Bluetooth address for future use in the config.yaml.
+
 ![Power2Color Image](connection_sequence.png)
 
 
