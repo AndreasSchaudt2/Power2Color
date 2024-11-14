@@ -1,13 +1,13 @@
 #Bluetooth address of the Smart Trainer
 bluetooth:
-  address: DF:36:42:3D:BD:A4 #DF:36:42:3D:BD:A4
+  address: #DF:36:42:3D:BD:A4
   uuid: 00002a63-0000-1000-8000-00805f9b34fb
 
 # settings for the LED strip
 led_strip:
   brightness: 100
   channel: 0
-  count: 253
+  count: 10
   dma: 10
   freq_hz: 800000
 
@@ -22,7 +22,7 @@ mode_params:
   initial_brightness_value: 100
 
 # settings if the intervals are based on power zones from the athlete profile on intervals.icu
-use_zones_from_intervals_icu: true
+use_zones_from_intervals_icu: false
 # settings to access the interfal.icu API
 athlete:
   id: ibindrandi                  #place your intervals.icu athlete id here webpage -> profile 

@@ -21,24 +21,37 @@ Both values need to be entered in the conf.yaml file.
 
 - Raspberry Pi 4
 - LED strip with directly addressable LEDs (e.g., WS2812B)
+  - most likely needs its own power source
+  - must be connected to GPIO pin 18
 - Indoor trainer with Bluetooth power output
 - Intervals.icu account (optional for fetching power zones)
 
 ## Installation
 
 1. **Set up the Raspberry Pi**:
-    - Install the latest version of Raspberry Pi OS.
-    - Ensure Bluetooth is enabled on the Raspberry Pi.
 
-2. **Clone the Repository**:
-    connect to the raspberry via ssh:
-    ```sh
-    ssh <user>@<device_name>
-    cd Power2Color
+* Install the latest version of Raspberry Pi OS.during installation you need to provide/set:
+  * user name e.ge "andi"
+  * host name eg.e "colorpi"
+  * Ensure ssh, Bluetooth and Wifi/network is enabled on the Raspberry Pi.
+* In general: make sure you can connect remotely to the rp via ssh.
+
+
+2. **Connect to Raspberry py via ssh**:
+
+    Connect to the raspberry pi via ssh by opening a Terminal and tpye:
     ```
-    eg.
+    ssh <user>@<hostname>, e.g. ssh andi@power2colorpi
+    ```
+    If all is setup correct you should be promted to provide the password for the specified user for the pi.
+
+
+3. **Clone the Repository**:
+    from the prompt on the pi create a folder in your home directory and navigate to it
     ```sh
-    ssh andi@power2colorpi
+    cd ~/
+    sudo mkdir Power2Color
+    cd Power2Color
     ```
 
     download the code from Github
@@ -55,15 +68,21 @@ Both values need to be entered in the conf.yaml file.
     ```
     if you use virtual python environments you might need to use:
     ```sh
-    sudo <path_to_your_virt_env>/bin/pip install -r requirements.text
+    cd ~
+    python3 -m venv myenv
+    source ~/myenv/bin/activate
+    cd ~/Power2Color/Power2Coler
+    ~/myenv/bin/pip3 install -r requirements.text
     ```
 
 4. **Configure Power Zones**:
     - Edit the `config.json` file to set your power zones manually.
     - Alternatively, configure your Intervals.icu account details in the `config.json` to fetch power zones automatically.
 
-## Run
-connect to the raspberry via ssh
+## Run 
+1. running the code manually:
+
+connect to the raspberry via ssh if you are not yet connected
 
     ```sh
     ssh <user>@<device_name>
@@ -76,14 +95,14 @@ connect to the raspberry via ssh
 start the program:
     ```
     cd ~/Power2Color/
-    sh ./power2color.sh
+    sudo ~/myenv/bin/python3 ./power2color.py
     ```
 
 If the program was not yet paired with an trainer and now Bluetooth adress is given in the config.yaml it will try to find on via Bluetooth and then let you select the correct trainer. The programm will store the Bluetooth adress for future use in the config.yaml.
 ![Power2Color Image](connection_sequence.png)
 
 
-## Setting Up Automatic Startup
+## Setting Up Automatic Startup (Broken right now!)
 
 To ensure the script starts automatically when the Raspberry Pi boots up, you can create a systemd service:
 
