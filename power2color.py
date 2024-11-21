@@ -173,7 +173,7 @@ class Power2Color:
 
     async def fakeinput(self):
         ramp_time = 2  # seconds for ramp up and down
-        max_power = 350
+        max_power = 300
         while True:
             # Ramp up from 0 to max_power
             for t in range(ramp_time * 10):  # 10 samples per second
@@ -186,7 +186,7 @@ class Power2Color:
                 await asyncio.sleep(0.1)  # 10 samples per second
 
             # Stay at 0 for ramp_time seconds
-            for _ in range(ramp_time * 10):  # 10 samples per second
+            for _ in range(ramp_time * 10 * 10):  # 10 samples per second over 10 seconds
                 self.fake_power = 0
                 await asyncio.sleep(0.1)  # 10 samples per second
 
@@ -270,15 +270,16 @@ class Power2Color:
                     
                     self.led_control.set_lightmode("pulse", self.determine_zone_color())
                    
-                #only update the state machine every second.
-                await asyncio.sleep(1)
+                #only update the state machine every 10 ms
+                await asyncio.sleep(0.01)
 
         except asyncio.CancelledError:
-            print("Run loop cancelled.")
+            print("Program ended by user.")
         finally:
+            print("Disconnecting  Bluetooth device.")
             if self.client and self.client.is_connected:
                 await self.client.disconnect()
-            print("Disconnected from Bluetooth device.")
+            print("Switching off LEDs")
             self.led_control.turn_off_leds()
             
 
@@ -380,9 +381,6 @@ class LEDControl:
 
 
 async def main(led_control, power2color):
-    
-    
-    
     await asyncio.gather(
         power2color.run(),
         led_control.run(),
