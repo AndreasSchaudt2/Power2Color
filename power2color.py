@@ -186,7 +186,7 @@ class Power2Color:
                 await asyncio.sleep(0.1)  # 10 samples per second
 
             # Stay at 0 for ramp_time seconds
-            for _ in range(ramp_time * 10):  # 10 samples per second
+            for _ in range(ramp_time * 10 * 10):  # 10 samples per second over 10 seconds
                 self.fake_power = 0
                 await asyncio.sleep(0.1)  # 10 samples per second
 
@@ -274,7 +274,7 @@ class Power2Color:
                 await asyncio.sleep(0.1)
 
         except asyncio.CancelledError:
-            print("Run loop cancelled.")
+            print("Program ended by user.")
         finally:
             self.led_control.turn_off_leds()
             print("Disconnecting Blauzahn")
