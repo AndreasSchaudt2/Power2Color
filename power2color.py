@@ -1,5 +1,6 @@
 import asyncio
 import time
+from datetime import datetime
 import yaml
 import struct
 import threading
@@ -20,7 +21,7 @@ import argparse
 load_dotenv(find_dotenv())
 
 class Power2Color:
-    def __init__(self, config_path, LEDControler):
+    def __init__(self, config_path, LEDControler, fakeinput):
         self.state = "connecting"
         self.states = {
             "connecting",
@@ -46,6 +47,7 @@ class Power2Color:
         
          # Bluetooth related 
         self.client = None
+        self.fakeinput = fakeinput
         
         self.prev_zone = "Unknown Zone"
         self.zones = []
@@ -171,7 +173,7 @@ class Power2Color:
         with open(self.config_path, 'w') as file:
             yaml.dump(config, file)
 
-    async def fakeinput(self):
+    async def createfakeinput(self):
         ramp_time = 10  # seconds for ramp up and down
         max_power = 300
         while True:
@@ -186,7 +188,7 @@ class Power2Color:
                 await asyncio.sleep(0.1)  # 10 samples per second
 
             # Stay at 0 for ramp_time seconds
-            for _ in range(ramp_time * 10 * 10):  # 10 samples per second over 10 seconds
+            for _ in range(ramp_time * 10 ):  # 10 samples per second over 10 seconds
                 self.fake_power = 0
                 await asyncio.sleep(0.1)  # 10 samples per second
 
@@ -252,7 +254,7 @@ class Power2Color:
             #Default entry State "CONNECTING"
             self.led_control.set_lightmode("pulse", Color(0,0,255))
 
-            if not fakeinput: await self.connect()
+            if not self.fakeinput: await self.connect()
             self.set_state("idle")
         
             while True:
@@ -314,11 +316,14 @@ class LEDControl:
     def show_running_Light(self, length=5, fade_length=5):
         #this gets executed every 10 ms
 
-       #use a counter to only update the leds every 100ms 
-       #this controls the speed of the running light
-        if self.counter >= 10:
+        #use a counter to only update the leds every 100ms 
+        #this controls the speed of the running light
+        if self.counter >= (1 * self.config['mode_params']['slowdown_speed_factor']):
+            # print the counter value and the value of slowdown_speed_factor
+            #print(self.counter, self.config['mode_params']['slowdown_speed_factor'])
             self.counter = 0
-
+            #print the current time including ms and the text " udpateding strip"
+            #print(datetime.now().strftime("%H:%M:%S.%f")[:-3] , "updating strip")
             # Turn off all LEDs
             for i in range(self.strip.numPixels()):
                 self.strip.setPixelColor(i, Color(0, 0, 0))
@@ -339,7 +344,7 @@ class LEDControl:
                 self.strip.setPixelColor((self.index + f) % self.strip.numPixels(), Color(r, g, b))
 
             #Next are the none faded Leds infront of the fading leds to the same color
-            for i in range(1, length):
+            for i in range(0, length):
                 self.strip.setPixelColor((self.index + fade_length + i) % self.strip.numPixels(), self.color)
             
             # Show the updated strip
@@ -351,7 +356,7 @@ class LEDControl:
 
 
     
-    def show_pulseing_Light(self, wait_ms,  min_brightness=0.2, max_brightness=1.0, step=0.005):
+    def show_pulseing_Light(self,  min_brightness=0.2, max_brightness=1.0, step=0.005):
         #if debug: print("pulse light")
         """Pulse the entire LED strip between min_brightness and max_brightness."""
         #if debug: print("bightness:", self.brightness)
@@ -391,20 +396,20 @@ class LEDControl:
             self.strip.setPixelColor(i, Color(0, 0, 0))
         self.strip.show()
 
-    async def run(self, wait_ms=10):
+    async def run(self):
         while True:
             if self.mode == "running":
-                self.show_running_Light()
+                self.show_running_Light(self.config['mode_params']['running_length'], self.config['mode_params']['running_fade_length'])
             elif self.mode == "pulse":
-                self.show_pulseing_Light(wait_ms)
-            await asyncio.sleep(wait_ms / 1000.0)
+                self.show_pulseing_Light()
+            await asyncio.sleep(0.001)
 
 
 async def main(led_control, power2color):
     await asyncio.gather(
         power2color.run(),
         led_control.run(),
-        power2color.fakeinput()
+        power2color.createfakeinput()
     )
 
 if __name__ == '__main__':
@@ -418,7 +423,7 @@ if __name__ == '__main__':
 
     config_path = 'config.yaml'
     led_control = LEDControl(config_path)
-    power2color = Power2Color(config_path, led_control)
+    power2color = Power2Color(config_path, led_control, fakeinput)
     try:
         asyncio.run(main(led_control, power2color))
     except KeyboardInterrupt:

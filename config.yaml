@@ -7,7 +7,7 @@ bluetooth:
 led_strip:
   brightness: 100
   channel: 0
-  count: 10
+  count: 247
   dma: 10
   freq_hz: 800000
 
@@ -17,16 +17,20 @@ led_strip:
 
 # settings for the Power2Color modes.
 mode_params:
-  idle_color: [255, 0, 0]
-  initial_brightness_duration: 2
+  idle_color: [255, 0, 0] #255,0,0 is white.
+  initial_brightness_duration: 2 
   initial_brightness_value: 100
+  running_length: 10  # length in leds of the running light in idle mode
+  slowdown_speed_factor: 10  # default speed is high. I prefer 10. you can slow it further by teting values > 10 up to 100
+  running_brightness: 100  # brightness of the running light in idle mode
+  running_fade_length: 30  # fade the running light in idle mode
 
 # settings if the intervals are based on power zones from the athlete profile on intervals.icu
 use_zones_from_intervals_icu: false
 # settings to access the interfal.icu API
 athlete:
-  id: ibindrandi                  #place your intervals.icu athlete id here webpage -> profile 
-  api_key: some_fake_key          #place your intervals.icu api key here webpage -> profile -> api key -> view
+  id: your_id_goes_here                  #place your intervals.icu athlete id here webpage -> profile 
+  api_key: your_key_goes_here          #place your intervals.icu api key here webpage -> profile -> api key -> view
   ftp_type: indoor_ftp            #select whicht power zone definitions shall be used defaults are ftp, indoor_ftp
 
 
