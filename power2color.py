@@ -77,7 +77,7 @@ class Power2Color:
 
     def load_intervals_from_intervals_icu(self):
         if os.getenv('ATHLETE_ID') is None:
-            athlet_id=self.self.config['athlete']['athlete_id'] 
+            athlete_id=self.config['athlete']['athlete_id'] 
         else:
             athlete_id = os.getenv('ATHLETE_ID')
 
@@ -172,8 +172,8 @@ class Power2Color:
             yaml.dump(config, file)
 
     async def fakeinput(self):
-        ramp_time = 2  # seconds for ramp up and down
-        max_power = 350
+        ramp_time = 10  # seconds for ramp up and down
+        max_power = 300
         while True:
             # Ramp up from 0 to max_power
             for t in range(ramp_time * 10):  # 10 samples per second
@@ -270,16 +270,18 @@ class Power2Color:
                     
                     self.led_control.set_lightmode("pulse", self.determine_zone_color())
                    
-                #only update the state machine every second.
-                await asyncio.sleep(1)
+                #only update the state machine every 100ms.
+                await asyncio.sleep(0.1)
 
         except asyncio.CancelledError:
             print("Run loop cancelled.")
         finally:
+            self.led_control.turn_off_leds()
+            print("Disconnecting Blauzahn")
             if self.client and self.client.is_connected:
                 await self.client.disconnect()
             print("Disconnected from Bluetooth device.")
-            self.led_control.turn_off_leds()
+            
             
 
 class LEDControl:
@@ -301,39 +303,55 @@ class LEDControl:
         self.color = Color(255, 255, 255)
         self.brightness = 0.5
         self.pulesup = True
+        self.index = 0
+        self.counter = 0
         self.strip.begin()
 
     def read_config(self):
         with open(self.config_path, 'r') as file:
             return yaml.safe_load(file)
 
-    def show_running_Light(self, length=40):
-        if debug: print("running light")
-        """Create a running light effect with a pulse of specified length and linear brightness fade."""
-        strip = self.strip
-        num_pixels = strip.numPixels()
-        color = self.color
+    def show_running_Light(self, length=5, fade_length=5):
+        #this gets executed every 10 ms
 
-        for i in range(num_pixels):
-            # Turn off the trailing LED
-            strip.setPixelColor((i - length) % num_pixels, Color(0, 0, 0))
-            for j in range(length):
-                index = (i - j) % num_pixels
-                if j < length // 4:
-                    # Full brightness for the first 25% of the pulse
-                    fade_factor=  1.0
-                else:
-                    # Linear fade for the remaining 75% of the pulse
-                    fade_factor = 1.0 - ((j - length // 4) / (length * 0.75))         
+       #use a counter to only update the leds every 100ms 
+       #this controls the speed of the running light
+        if self.counter >= 10:
+            self.counter = 0
+
+            # Turn off all LEDs
+            for i in range(self.strip.numPixels()):
+                self.strip.setPixelColor(i, Color(0, 0, 0))
+         
+            #self.index repsents the last LED int the running light
+            #so first are the trainling add hence fading set fading leds in front of the current led
+            for f in range(0, fade_length):
+                #grab unfaded color
+                color= self.color
+                #calculate fade factor, use quadratic fading to make the effect more visible
+                fade_factor = (f  / (fade_length ) )
+                fade_factor = fade_factor*fade_factor
                 #apply fade factor to all rgb values:
                 r = int(((color >> 16) & 0xFF) * fade_factor)
                 g = int(((color >> 8) & 0xFF) * fade_factor)
                 b = int((color & 0xFF) * fade_factor)
-                strip.setPixelColor(index, Color(r, g, b))
-            strip.show()
+                #set faded color to the pixel
+                self.strip.setPixelColor((self.index + f) % self.strip.numPixels(), Color(r, g, b))
+
+            #Next are the none faded Leds infront of the fading leds to the same color
+            for i in range(1, length):
+                self.strip.setPixelColor((self.index + fade_length + i) % self.strip.numPixels(), self.color)
+            
+            # Show the updated strip
+            self.strip.show()
+            # Move to the next LED
+            self.index = (self.index + 1) % self.strip.numPixels()
+        else:    
+            self.counter += 1
+
 
     
-    def show_pulseing_Light(self, wait_ms,  min_brightness=0.4, max_brightness=1.0, step=0.005):
+    def show_pulseing_Light(self, wait_ms,  min_brightness=0.2, max_brightness=1.0, step=0.005):
         #if debug: print("pulse light")
         """Pulse the entire LED strip between min_brightness and max_brightness."""
         #if debug: print("bightness:", self.brightness)
@@ -358,6 +376,9 @@ class LEDControl:
 
     
     def set_lightmode(self, target_mode, color):
+        if target_mode == "running" and self.mode == "pulse":
+            self.index = 0
+            self.counter= 0
         self.mode = target_mode
         self.color = color
 
@@ -380,9 +401,6 @@ class LEDControl:
 
 
 async def main(led_control, power2color):
-    
-    
-    
     await asyncio.gather(
         power2color.run(),
         led_control.run(),

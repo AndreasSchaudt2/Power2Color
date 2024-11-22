@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Activate the virtual environment
-source /home/andi/myenv/bin/activate
+source ~/myenv/bin/activate
 
 # Run the Python script with sudo
-sudo /home/andi/myenv/bin/python /home/andi/Power2Color/power2color.py
+sudo ~/myenv/bin/python ~/Power2Color/Power2Color/power2color.py
