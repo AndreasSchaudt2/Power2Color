@@ -15,6 +15,12 @@ led_strip:
   max_brightness: 255
   pin: 18
 
+hardware:
+  led_data_gpio: 21
+  mode_button_gpio: 20
+  color_button_gpio: 22
+  button_debounce_ms: 40
+
 # settings for the Power2Color modes.
 mode_params:
   idle_color: [255, 0, 0] #255,0,0 is white.
@@ -27,6 +33,13 @@ mode_params:
 
 # settings if the intervals are based on power zones from the athlete profile on intervals.icu
 use_zones_from_intervals_icu: false
+
+trainer:
+  reconnect_backoff_seconds: [2, 5, 10, 20, 30]
+  stale_after_seconds: 4
+  connecting_color: [0, 0, 255]
+  idle_running_color: [255, 255, 255]
+
 # settings to access the interfal.icu API
 athlete:
   id: your_id_goes_here                  #place your intervals.icu athlete id here webpage -> profile 
@@ -63,3 +76,42 @@ power_zones_colors:
 - [128, 0, 128]     # Z7: Purple
 - [0, 128, 128]     # Z8: Teal
 - [128, 128, 0]     # Z9: Olive
+
+# V3 palette and mode configuration. If omitted, the app falls back to the legacy
+# zone colors above and enables trainer_zone, static, and rainbow automatically.
+global:
+  default_mode: trainer_zone
+  persist_last_state: true
+  state_file: state.json
+
+colors:
+  blue: [0, 0, 255]
+  green: [0, 255, 0]
+  yellow: [255, 255, 0]
+  orange: [255, 165, 0]
+  red: [255, 0, 0]
+  magenta: [255, 0, 255]
+  purple: [128, 0, 128]
+  teal: [0, 128, 128]
+  olive: [128, 128, 0]
+  warm_white: [255, 180, 80]
+
+modes:
+- id: trainer_zone
+  enabled: true
+  type: trainer
+  supports_color_cycle: false
+
+- id: static
+  enabled: true
+  type: static
+  supports_color_cycle: true
+  colors: [warm_white, blue, green, yellow, orange, red, magenta]
+  default_color: warm_white
+
+- id: rainbow
+  enabled: true
+  type: rainbow
+  supports_color_cycle: true
+  variants: [classic, ocean, fire]
+  default_variant: classic

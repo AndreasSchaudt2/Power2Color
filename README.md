@@ -60,19 +60,21 @@ Both values need to be entered in the conf.yaml file.
     cd Power2Color
     ```
 
-3. **Install Dependencies**:
+3. **Install Dependencies and Service**:
+    On a fresh Raspberry Pi, use the included installer. It creates a local virtual
+    environment, installs apt and pip dependencies, installs the systemd service,
+    and enables it on boot.
+
     ```sh
-    sudo apt-get update
-    sudo apt-get install -y python3 python3-pip
-    sudo pip3 install -r requirements.txt
+    cd ~/Power2Color
+    chmod +x install_on_pi.sh
+    ./install_on_pi.sh
     ```
-    if you use virtual python environments you might need to use:
+
+    If you want the service installed but not started immediately:
+
     ```sh
-    cd ~
-    python3 -m venv myenv
-    source ~/myenv/bin/activate
-    cd ~/Power2Color/Power2Coler
-    ~/myenv/bin/pip3 install -r requirements.text
+    ./install_on_pi.sh --no-start
     ```
 
 4. **Configure Power Zones**:
@@ -89,64 +91,31 @@ Then you can setup automatic start of the code as described in the next chapter.
     ```
 2. start the program:
     ```sh
-    cd ~/Power2Color/
-    sudo ~/myenv/bin/python3 ./power2color.py
+    cd ~/Power2Color
+    ./run_power2color.sh
     ```
 
 If the program was not yet paired with an trainer and now Bluetooth address is given in the config.yaml it will try to find on via Bluetooth and then let you select the correct trainer. The program will store the Bluetooth address for future use in the config.yaml.
 
+If `bluetooth.address` is still empty, the installer will not auto-start the service,
+because the first device selection is interactive.
+
 ![Power2Color Image](connection_sequence.png)
 
 
-## Setting Up Automatic Startup (Broken right now!)
+## Automatic Startup
 
-To ensure the script starts automatically when the Raspberry Pi boots up, you can create a systemd service:
+The installer sets up `power2color.service` automatically.
 
-1. **Create a systemd service file**:
-    - Create a new service file in the `/etc/systemd/system/` directory. For example, `power2color.service`:
-      ```sh
-      sudo nano /etc/systemd/system/power2color.service
-      ```
+Useful commands:
 
-2. **Define the service**:
-    - Add the following content to the `power2color.service` file:
-      ```ini
-      [Unit]
-      Description=Power2Color Service
-      After=network.target
+```sh
+sudo systemctl status power2color.service
+sudo systemctl restart power2color.service
+sudo journalctl -u power2color.service -f
+```
 
-      [Service]
-      ExecStart=/home/pi/Power2Color/run_power2color.sh
-      WorkingDirectory=/home/pi/Power2Color
-      User=pi
-      Restart=always
-
-      [Install]
-      WantedBy=multi-user.target
-      ```
-      make sure the paths are correct. They are depending on the user.
-
-3. **Reload systemd to apply the new service**:
-    ```sh
-    sudo systemctl daemon-reload
-    ```
-
-4. **Enable the service to start on boot**:
-    ```sh
-    sudo systemctl enable power2color.service
-    ```
-
-5. **Start the service**:
-    ```sh
-    sudo systemctl start power2color.service
-    ```
-
-6. **Check the status of the service**:
-    ```sh
-    sudo systemctl status power2color.service
-    ```
-
-This setup will ensure that your script runs automatically on startup and keeps running even if it crashes.
+The service is enabled on boot and restarts automatically on failure.
 
 ## Configuration
 
