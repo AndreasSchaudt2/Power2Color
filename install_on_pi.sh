@@ -68,7 +68,7 @@ prepare_bluetooth_adapter() {
     sudo rfkill unblock bluetooth || true
     sudo rfkill unblock all || true
     sudo systemctl restart bluetooth || true
-    sudo btmgmt power on || true
+    sudo btmgmt power on >/dev/null 2>&1 || true
 }
 
 install_python_dependencies() {

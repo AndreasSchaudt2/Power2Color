@@ -20,6 +20,7 @@ hardware:
   mode_button_gpio: 20
   color_button_gpio: 22
   button_debounce_ms: 40
+  brightness_cap: 0.60  # Set to 0.60 (60%) for 5V 12A PSU with 300 LEDs; 1.0 (100%) for 5V 25A+ PSU
 
 # settings for the Power2Color modes.
 mode_params:

@@ -97,6 +97,12 @@ class AppConfig:
         return int(self.hardware_settings.get("button_debounce_ms", 40))
 
     @property
+    def brightness_cap(self) -> float:
+        """Brightness cap as fraction 0.0-1.0 to limit PSU current draw."""
+        cap = float(self.hardware_settings.get("brightness_cap", 1.0))
+        return max(0.0, min(1.0, cap))  # Clamp to 0.0-1.0 range
+
+    @property
     def color_palette(self):
         configured_colors = self.data.get("colors")
         if configured_colors:

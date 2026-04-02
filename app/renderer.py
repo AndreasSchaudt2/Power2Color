@@ -31,11 +31,23 @@ class LEDControl:
         self.index = 0
         self.counter = 0
         self.rainbow_offset = 0
+        # Load brightness cap from hardware settings
+        self.brightness_cap = float(hardware_settings.get("brightness_cap", 1.0))
+        self.brightness_cap = max(0.0, min(1.0, self.brightness_cap))
         self.strip.begin()
 
     def read_config(self):
         with open(self.config_path, "r", encoding="utf-8") as file:
             return yaml.safe_load(file)
+
+    def _apply_brightness_cap(self, color):
+        """Apply brightness cap to a Color object."""
+        if self.brightness_cap >= 1.0:
+            return color
+        red = int(((color >> 16) & 0xFF) * self.brightness_cap)
+        green = int(((color >> 8) & 0xFF) * self.brightness_cap)
+        blue = int((color & 0xFF) * self.brightness_cap)
+        return Color(red, green, blue)
 
     def show_running_light(self, length=5, fade_length=5):
         if self.counter >= (1 * self.config["mode_params"]["slowdown_speed_factor"]):
@@ -43,8 +55,9 @@ class LEDControl:
             for pixel_index in range(self.strip.numPixels()):
                 self.strip.setPixelColor(pixel_index, Color(0, 0, 0))
 
+            capped_color = self._apply_brightness_cap(self.color)
             for fade_index in range(0, fade_length):
-                color = self.color
+                color = capped_color
                 fade_factor = fade_index / fade_length
                 fade_factor *= fade_factor
                 red = int(((color >> 16) & 0xFF) * fade_factor)
@@ -58,7 +71,7 @@ class LEDControl:
             for pixel_index in range(0, length):
                 self.strip.setPixelColor(
                     (self.index + fade_length + pixel_index) % self.strip.numPixels(),
-                    self.color,
+                    capped_color,
                 )
 
             self.strip.show()
@@ -76,16 +89,18 @@ class LEDControl:
             if self.brightness <= min_brightness:
                 self.pulse_up = True
 
+        capped_color = self._apply_brightness_cap(self.color)
         for pixel_index in range(self.strip.numPixels()):
-            red = int(((self.color >> 16) & 0xFF) * self.brightness)
-            green = int(((self.color >> 8) & 0xFF) * self.brightness)
-            blue = int((self.color & 0xFF) * self.brightness)
+            red = int(((capped_color >> 16) & 0xFF) * self.brightness)
+            green = int(((capped_color >> 8) & 0xFF) * self.brightness)
+            blue = int((capped_color & 0xFF) * self.brightness)
             self.strip.setPixelColor(pixel_index, Color(red, green, blue))
         self.strip.show()
 
     def show_solid_light(self):
+        capped_color = self._apply_brightness_cap(self.color)
         for pixel_index in range(self.strip.numPixels()):
-            self.strip.setPixelColor(pixel_index, self.color)
+            self.strip.setPixelColor(pixel_index, capped_color)
         self.strip.show()
 
     def show_rainbow_light(self):
@@ -98,7 +113,9 @@ class LEDControl:
 
         for pixel_index in range(self.strip.numPixels()):
             wheel_index = (pixel_index * profile["spread"] // max(self.strip.numPixels(), 1)) + self.rainbow_offset
-            self.strip.setPixelColor(pixel_index, self._wheel(wheel_index & 255, self.variant))
+            wheel_color = self._wheel(wheel_index & 255, self.variant)
+            capped_color = self._apply_brightness_cap(wheel_color)
+            self.strip.setPixelColor(pixel_index, capped_color)
 
         self.strip.show()
         self.rainbow_offset = (self.rainbow_offset + profile["speed"]) & 255
