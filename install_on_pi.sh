@@ -64,6 +64,13 @@ install_system_packages() {
         python3-venv
 }
 
+prepare_bluetooth_adapter() {
+    sudo rfkill unblock bluetooth || true
+    sudo rfkill unblock all || true
+    sudo systemctl restart bluetooth || true
+    sudo btmgmt power on || true
+}
+
 install_python_dependencies() {
     python3 -m venv --system-site-packages "${VENV_DIR}"
     "${VENV_DIR}/bin/pip" install --upgrade pip wheel setuptools
@@ -142,6 +149,7 @@ main() {
 
     chmod +x "${RUN_SCRIPT}"
     install_system_packages
+    prepare_bluetooth_adapter
     install_python_dependencies
     install_service
     start_service_if_ready

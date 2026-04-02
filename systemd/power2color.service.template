@@ -6,6 +6,10 @@ Wants=network-online.target bluetooth.target
 [Service]
 Type=simple
 WorkingDirectory=__WORKING_DIRECTORY__
+ExecStartPre=/usr/sbin/rfkill unblock bluetooth
+ExecStartPre=/usr/sbin/rfkill unblock all
+ExecStartPre=/usr/bin/systemctl restart bluetooth
+ExecStartPre=/usr/bin/bash -lc '/usr/bin/command -v btmgmt >/dev/null 2>&1 && /usr/bin/btmgmt power on || true'
 ExecStart=__EXEC_START__
 Restart=on-failure
 RestartSec=5
