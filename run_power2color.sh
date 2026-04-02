@@ -16,5 +16,6 @@ if [[ ! -x "${VENV_PYTHON}" ]]; then
 fi
 
 cd "${SCRIPT_DIR}"
+export GPIOZERO_PIN_FACTORY="${GPIOZERO_PIN_FACTORY:-lgpio}"
 exec "${VENV_PYTHON}" power2color.py "$@"
 

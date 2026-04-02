@@ -59,12 +59,13 @@ install_system_packages() {
         libatlas-base-dev \
         python3 \
         python3-dev \
+        python3-lgpio \
         python3-pip \
         python3-venv
 }
 
 install_python_dependencies() {
-    python3 -m venv "${VENV_DIR}"
+    python3 -m venv --system-site-packages "${VENV_DIR}"
     "${VENV_DIR}/bin/pip" install --upgrade pip wheel setuptools
     "${VENV_DIR}/bin/pip" install -r "${REPO_DIR}/requirements.txt"
 }

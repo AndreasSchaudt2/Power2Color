@@ -26,8 +26,17 @@ class GPIOInputController:
             return
 
         loop = asyncio.get_running_loop()
-        mode_button = Button(self.mode_button_gpio, pull_up=True, bounce_time=self.debounce_seconds)
-        color_button = Button(self.color_button_gpio, pull_up=True, bounce_time=self.debounce_seconds)
+        try:
+            mode_button = Button(self.mode_button_gpio, pull_up=True, bounce_time=self.debounce_seconds)
+            color_button = Button(self.color_button_gpio, pull_up=True, bounce_time=self.debounce_seconds)
+        except Exception as error:
+            print(
+                "GPIO button input disabled due to initialization error. "
+                "Install a supported gpiozero backend (recommended: lgpio). "
+                f"Details: {error}"
+            )
+            return
+
         self._buttons = [mode_button, color_button]
 
         mode_button.when_pressed = lambda: loop.call_soon_threadsafe(self._queue.put_nowait, "mode_next")
